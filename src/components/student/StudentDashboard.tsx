@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { BookOpen, Brain, Award, Play, FileText, Star } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { AILearningModule } from './AILearningModule';
 
 export const StudentDashboard: React.FC = () => {
   const { user } = useAuth();
   const [selectedLevel, setSelectedLevel] = useState<'beginner' | 'intermediate' | 'advanced' | null>(null);
+  const [showAILearning, setShowAILearning] = useState(false);
 
   const levels = [
     {
@@ -44,6 +46,11 @@ export const StudentDashboard: React.FC = () => {
       price: 'Premium tier'
     }
   ];
+
+  // Show AI Learning Module
+  if (showAILearning) {
+    return <AILearningModule onBack={() => setShowAILearning(false)} />;
+  }
 
   if (selectedLevel) {
     return <LevelDetailView level={selectedLevel} onBack={() => setSelectedLevel(null)} />;
@@ -147,9 +154,12 @@ export const StudentDashboard: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Start</h3>
             <div className="space-y-3">
-              <button className="w-full flex items-center justify-center space-x-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 py-3 px-4 rounded-lg font-medium transition-colors">
+              <button 
+                onClick={() => setShowAILearning(true)}
+                className="w-full flex items-center justify-center space-x-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 py-3 px-4 rounded-lg font-medium transition-colors"
+              >
                 <Play className="w-5 h-5" />
-                <span>Try Free AI Lesson</span>
+                <span>Start Free AI Lessons</span>
               </button>
               <button className="w-full flex items-center justify-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 px-4 rounded-lg font-medium transition-colors">
                 <FileText className="w-5 h-5" />
@@ -194,13 +204,20 @@ const LevelDetailView: React.FC<{
   level: 'beginner' | 'intermediate' | 'advanced'; 
   onBack: () => void; 
 }> = ({ level, onBack }) => {
+  const [showAILearning, setShowAILearning] = useState(false);
+
+  // Show AI Learning Module from level detail
+  if (showAILearning) {
+    return <AILearningModule onBack={() => setShowAILearning(false)} />;
+  }
+
   const levelContent = {
     beginner: {
       title: 'Beginner Level',
       lessons: [
-        { id: 1, title: 'Sign Language Alphabet', type: 'AI', duration: '15 min', free: true },
-        { id: 2, title: 'Finger Spelling Basics', type: 'AI', duration: '20 min', free: true },
-        { id: 3, title: 'Your Name in Signs', type: 'AI', duration: '10 min', free: true },
+        { id: 1, title: 'Sign Language Alphabet', type: 'AI', duration: '15 min', free: true, action: 'ai' },
+        { id: 2, title: 'Finger Spelling Basics', type: 'AI', duration: '20 min', free: true, action: 'ai' },
+        { id: 3, title: 'Your Name in Signs', type: 'AI', duration: '10 min', free: true, action: 'ai' },
         { id: 4, title: 'Personal Tutor Session', type: 'Tutor', duration: '60 min', free: false },
       ]
     },
@@ -264,7 +281,14 @@ const LevelDetailView: React.FC<{
                   ) : (
                     <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-medium">Premium</span>
                   )}
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                  <button 
+                    onClick={() => {
+                      if (lesson.action === 'ai') {
+                        setShowAILearning(true);
+                      }
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                  >
                     {lesson.free ? 'Start' : 'Unlock'}
                   </button>
                 </div>
