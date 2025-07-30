@@ -140,7 +140,17 @@ export const StudentDashboard: React.FC = () => {
 
                 <div className="border-t pt-4">
                   <p className="text-sm font-medium text-gray-900">{level.price}</p>
-                  <button className={`w-full mt-3 ${level.color} hover:opacity-90 text-white py-2 px-4 rounded-lg font-medium transition-colors`}>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (level.id === 'beginner') {
+                        setShowAILearning(true);
+                      } else {
+                        setSelectedLevel(level.id);
+                      }
+                    }}
+                    className={`w-full mt-3 ${level.color} hover:opacity-90 text-white py-2 px-4 rounded-lg font-medium transition-colors`}
+                  >
                     Start Learning
                   </button>
                 </div>
@@ -178,7 +188,12 @@ export const StudentDashboard: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-600">500 KES/hr</p>
-                  <button className="text-sm text-blue-600 hover:text-blue-700">Book Session</button>
+                  <button 
+                    onClick={() => alert('Tutor booking will be available after profile approval')}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    Book Session
+                  </button>
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -188,7 +203,12 @@ export const StudentDashboard: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-600">400 KES/hr</p>
-                  <button className="text-sm text-blue-600 hover:text-blue-700">Book Session</button>
+                  <button 
+                    onClick={() => alert('Tutor booking will be available after profile approval')}
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    Book Session
+                  </button>
                 </div>
               </div>
             </div>
@@ -285,9 +305,17 @@ const LevelDetailView: React.FC<{
                     onClick={() => {
                       if (lesson.action === 'ai') {
                         setShowAILearning(true);
+                      } else if (lesson.free) {
+                        setShowAILearning(true);
+                      } else {
+                        alert('This lesson requires payment. Please upgrade to access premium content.');
                       }
                     }}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      lesson.free 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                        : 'bg-gray-300 hover:bg-gray-400 text-gray-700'
+                    }`}
                   >
                     {lesson.free ? 'Start' : 'Unlock'}
                   </button>
